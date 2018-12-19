@@ -37,7 +37,7 @@
 
         <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
 
-        <sequenceFlow id="flow7" sourceRef="modifyapply" targetRef="exclusivegateway2"></sequenceFlow
+        <sequenceFlow id="flow7" sourceRef="modifyapply" targetRef="exclusivegateway2"></sequenceFlow>
 
         <sequenceFlow id="flow11" name="拒绝" sourceRef="exclusivegateway3" targetRef="modifyapply">
             <conditionExpression xsi:type="tFormalExpression"><![CDATA[${hrapprove=='false'}]]></conditionExpression>

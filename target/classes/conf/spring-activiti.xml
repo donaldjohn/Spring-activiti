@@ -18,9 +18,11 @@
         <property name="activityFontName" value="宋体"></property>
         <property name="labelFontName" value="宋体"></property>
     </bean>
+
     <bean id="processEngineFactory" class="org.activiti.spring.ProcessEngineFactoryBean">
         <property name="processEngineConfiguration" ref="processEngineConfigureation"/>
     </bean>
+
     <bean id="repositoryService" factory-bean="processEngineFactory" factory-method="getRepositoryService"/>
     <bean id="runtimeService" factory-bean="processEngineFactory" factory-method="getRuntimeService"/>
     <bean id="formService" factory-bean="processEngineFactory" factory-method="getFormService"/>
@@ -28,4 +30,12 @@
     <bean id="taskService" factory-bean="processEngineFactory" factory-method="getTaskService"/>
     <bean id="historyService" factory-bean="processEngineFactory" factory-method="getHistoryService"/>
     <bean id="managementService" factory-bean="processEngineFactory" factory-method="getManagementService"/>
+
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfigureation" />
+    </bean>
+
+    <bean id="activitiRule" class="org.activiti.engine.test.ActivitiRule">
+        <property name="processEngine" ref="processEngine" />
+    </bean>
 </beans>

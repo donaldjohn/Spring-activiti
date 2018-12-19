@@ -605,7 +605,7 @@ public class ActivitiController
                 historicActivityInstances);
 
 
-        InputStream in = gen.generateDiagram(bpmnmodel, "png", activeActivityIds, highLightedFlows, "宋体", "宋体", null, 1.0);
+        InputStream in = gen.generateDiagram(bpmnmodel, "png", activeActivityIds, highLightedFlows, "宋体", "宋体", "宋体", null, 1.0);
         //InputStream in=gen.generateDiagram(bpmnmodel, "png", activeActivityIds);
         ServletOutputStream output = response.getOutputStream();
         IOUtils.copy(in, output);
