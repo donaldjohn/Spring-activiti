@@ -8,14 +8,15 @@
        http://www.springframework.org/schema/context 
     http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:property-placeholder location="classpath:conf.properties" />
+    <context:property-placeholder location="classpath:conf/conf.properties" />
 
     <!-- 配置Activiti -->
     <bean id="processEngineConfigureation" class="org.activiti.spring.SpringProcessEngineConfiguration">
         <property name="dataSource" ref="dataSource"/>
         <property name="transactionManager" ref="transactionManager"/>
         <property name="databaseSchemaUpdate" value="true"/>
-        <property name="jobExecutorActivate" value="false"/>
+        <property name="jobExecutorActivate" value="true"/>
+        <property name="asyncExecutorActivate" value="true"/>
         <property name="deploymentResources" value="classpath:process/*.bpmn"/>
         <property name="activityFontName" value="宋体"></property>
         <property name="labelFontName" value="宋体"></property>
