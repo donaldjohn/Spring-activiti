@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+    <process id="consultTask" name="咨询处理流程" isExecutable="true">
+
+        <startEvent id="startEventUserSubmitConsult" name="提交咨询" activiti:initiator="userId"></startEvent>
+
+
+        <sequenceFlow id="flowConsultSubmit" sourceRef="startEventUserSubmitConsult" targetRef="adminAssign"></sequenceFlow>
+
+        <!--管理员分配: 默认用户组 管理员-->
+        <userTask id="adminAssign" name="管理员分配任务" activiti:candidateGroups="admin"></userTask>
+
+        <sequenceFlow id="flowAssignOrRejectTask" sourceRef="adminAssign" targetRef="exclusiveGatewayAdminDecision"/>
+
+        <exclusiveGateway id="exclusiveGatewayAdminDecision" name="分配处理人还是拒绝"></exclusiveGateway>
+
+        <sequenceFlow id="flowAssignedTask" name="分配任务" sourceRef="exclusiveGatewayAdminDecision" targetRef="employeeHandleTask">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${rejectTask=='false'}]]></conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flowRejectedTask" name="拒绝任务" sourceRef="exclusiveGatewayAdminDecision" targetRef="endEventTaskFinished">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${rejectTask=='true'}]]></conditionExpression>
+        </sequenceFlow>
+
+        <userTask id="employeeHandleTask" activiti:dueDate="" name="专家处理" activiti:assignee="${employeeId}"></userTask>
+
+        <boundaryEvent id="boundaryTimerTaskHandleExpired" name="专家任务超时回退" attachedToRef="employeeHandleTask" cancelActivity="true">
+            <timerEventDefinition>
+              <timeDuration>${duration}</timeDuration>
+            </timerEventDefinition>
+        </boundaryEvent>
+
+        <sequenceFlow id="flowReturnExpiredTaskToAdmin" sourceRef="boundaryTimerTaskHandleExpired" targetRef="adminAssign"></sequenceFlow>
+
+        <!--专家处理还是退回了任务-->
+        <sequenceFlow id="flowEmployeeHandleOrRejectTask" sourceRef="employeeHandleTask" targetRef="exclusiveGatewayEmployeeDecision"/>
+
+        <exclusiveGateway id="exclusiveGatewayEmployeeDecision" name="是否退回任务"></exclusiveGateway>
+
+        <sequenceFlow id="flowEmployeeHandledTask" name="处理咨询" sourceRef="exclusiveGatewayEmployeeDecision" targetRef="endEventTaskFinished">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${returnTask=='false'}]]></conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flowEmployeeReturnTask" name="退回咨询任务" sourceRef="exclusiveGatewayEmployeeDecision" targetRef="adminAssign">
+            <conditionExpression xsi:type="tFormalExpression"><![CDATA[${returnTask=='true'}]]></conditionExpression>
+        </sequenceFlow>
+
+        <endEvent id="endEventTaskFinished" name="咨询结束"></endEvent>
+    </process>
+    <bpmndi:BPMNDiagram>
+        <bpmndi:BPMNPlane>
+            <bpmndi:BPMNShape bpmnElement="boundaryTimerTaskHandleExpired">
+                <omgdc:Bounds height="48.0" width="48.0" x="-184.0" y="36.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="adminAssign">
+                <omgdc:Bounds height="48.0" width="120.0" x="-280.0" y="-44.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="exclusiveGatewayAdminDecision">
+                <omgdc:Bounds height="48.0" width="48.0" x="-244.0" y="96.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="exclusiveGatewayEmployeeDecision">
+                <omgdc:Bounds height="48.0" width="48.0" x="116.0" y="96.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="startEventUserSubmitConsult">
+                <omgdc:Bounds height="48.0" width="48.0" x="-384.0" y="-44.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="endEventTaskFinished">
+                <omgdc:Bounds height="48.0" width="48.0" x="116.0" y="216.0"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape bpmnElement="employeeHandleTask">
+                <omgdc:Bounds height="48.0" width="120.0" x="-100.0" y="96.0"/>
+            </bpmndi:BPMNShape>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</definitions>
